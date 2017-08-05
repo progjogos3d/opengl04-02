@@ -18,3 +18,10 @@ A classe da camera gera as matrizes com base em dois métodos da classe `Matrix4
 Para a taxa de aspecto, solicitamos a OpenGL informações sobre o Viewport e a calculamos automaticamente. Em muitos 
 tutoriais, utiliza-se diretamente o tamanho da janela, porém, monitores retina display (Mac e celulares) podem 
 possuir dimensões diferentes que as da janela, por isso esse método é recomendado.
+
+No shader, as matrizes são repassadas como uniforms e utilizadas para transformar a posição do vértice:
+
+basic.vert:
+```glsl
+gl_Position = uProjection * uView * uWorld * vec4(aPosition, 1.0);
+```
