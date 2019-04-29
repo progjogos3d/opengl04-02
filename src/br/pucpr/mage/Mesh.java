@@ -1,5 +1,6 @@
 package br.pucpr.mage;
 
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
@@ -24,6 +25,7 @@ public class Mesh {
 
     private Map<String, ArrayBuffer> attributes = new HashMap<>();
     private Map<String, Uniform> uniforms = new HashMap<>();
+    private boolean wireframe = false;
 
     Mesh() {
         id = glGenVertexArrays();
@@ -84,8 +86,9 @@ public class Mesh {
     /**
      * Define o valor de um uniforme dentro da malha
      * @param name Nome do uniforme
+     * @param type O tipo do uniforme
      * @param value valor a ser definido
-     * @return O próprio shader
+     * @return A própria malha.
      */
     private Mesh setUniform(String name, UniformType type, Object value) {
         if (value == null)
@@ -100,7 +103,7 @@ public class Mesh {
      * Define o valor de um uniforme dentro da malha
      * @param name Nome do uniforme
      * @param matrix valor a ser definido
-     * @return O próprio shader
+     * @return A própria malha.
      */
     public Mesh setUniform(String name, Matrix3f matrix) {
         return setUniform(name, UniformType.Matrix3f, matrix);
@@ -110,7 +113,7 @@ public class Mesh {
      * Define o valor de um uniforme dentro da malha
      * @param name Nome do uniforme
      * @param matrix valor a ser definido
-     * @return O próprio shader
+     * @return A própria malha.
      */
     public Mesh setUniform(String name, Matrix4f matrix) {
         return setUniform(name, UniformType.Matrix4f, matrix);
@@ -120,7 +123,7 @@ public class Mesh {
      * Define o valor de um uniforme dentro da malha
      * @param name Nome do uniforme
      * @param vector valor a ser definido
-     * @return O próprio shader
+     * @return A própria malha.
      */
     public Mesh setUniform(String name, Vector2f vector) {
         return setUniform(name, UniformType.Vector2f, vector);
@@ -130,7 +133,7 @@ public class Mesh {
      * Define o valor de um uniforme dentro da malha
      * @param name Nome do uniforme
      * @param vector valor a ser definido
-     * @return O próprio shader
+     * @return A própria malha.
      */
     public Mesh setUniform(String name, Vector3f vector) {
         return setUniform(name, UniformType.Vector3f, vector);
@@ -139,7 +142,7 @@ public class Mesh {
      * Define o valor de um uniforme dentro da malha
      * @param name Nome do uniforme
      * @param vector valor a ser definido
-     * @return O próprio shader
+     * @return A própria malha.
      */
     public Mesh setUniform(String name, Vector4f vector) {
         return setUniform(name, UniformType.Vector4f, vector);
@@ -149,7 +152,7 @@ public class Mesh {
      * Define o valor de um uniforme dentro da malha
      * @param name Nome do uniforme
      * @param value valor a ser definido
-     * @return O próprio shader
+     * @return A própria malha.
      */
     public Mesh setUniform(String name, float value) {
         return setUniform(name, UniformType.Float, value);
@@ -159,7 +162,7 @@ public class Mesh {
      * Define o valor de um uniforme dentro da malha
      * @param name Nome do uniforme
      * @param value valor a ser definido
-     * @return O próprio shader
+     * @return A própria malha.
      */
     public Mesh setUniform(String name, int value) {
         return setUniform(name, UniformType.Integer, value);
@@ -169,10 +172,27 @@ public class Mesh {
      * Define o valor de um uniforme dentro da malha
      * @param name Nome do uniforme
      * @param value valor a ser definido
-     * @return O próprio shader
+     * @return A própria malha.
      */
     public Mesh setUniform(String name, boolean value) {
         return setUniform(name, UniformType.Boolean, value);
+    }
+
+    /**
+     * Define se a malha sera desenhada no modo wireframe ou não
+     * @param wireframe True para desenhar wireframe
+     * @return A própria malha.
+     */
+    public Mesh setWireframe(boolean wireframe) {
+        this.wireframe = wireframe;
+        return this;
+    }
+
+    /**
+     * @return True se desenhará apenas o wireframe, falso se a malha será desenhada de maneira sólida
+     */
+    public boolean isWireframe() {
+        return wireframe;
     }
 
     /**
@@ -183,6 +203,8 @@ public class Mesh {
         if (shader == null || attributes.size() == 0) {
             return this;
         }
+
+        glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
 
         //Precisamos dizer qual VAO iremos desenhar
         glBindVertexArray(id);

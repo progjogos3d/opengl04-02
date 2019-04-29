@@ -49,7 +49,7 @@ public class CameraScene implements Scene {
         shader.unbind();
 
         //Definimos a transformação de mundo da malha
-        mesh.setUniform("uWorld", new Matrix4f().rotateX(0.2f).rotateY(angle));
+        mesh.setUniform("uWorld", new Matrix4f().rotateX(0.3f).rotateY(angle));
         mesh.draw();
     }
 
