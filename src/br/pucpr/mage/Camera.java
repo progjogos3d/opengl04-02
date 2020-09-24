@@ -1,4 +1,4 @@
-package br.pucpr.cg;
+package br.pucpr.mage;
 
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
@@ -9,6 +9,8 @@ import br.pucpr.mage.Shader;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 
 /**
  * Representa a camera. Toda camera é formada por dois tipos de transformacoes:
@@ -57,8 +59,9 @@ public class Camera {
      * Troca o angulo de abertura da camera, também chamado de campo de visão (Field of View)
      * @param fov Novo angulo, em radianos. Utilize um valor entre 45 e 60 graus para uma visualização mais natural
      */
-    public void setFov(float fov) {
+    public Camera setFov(float fov) {
         this.fov = fov;
+        return this;
     }
 
     /**
@@ -73,8 +76,9 @@ public class Camera {
      * Define o plano mais próximo de visualização da camera. Tudo o que estiver atrás desse plano não será visto.
      * @param near A distância até o plano. Deve obrigatoriamente ser maior do que 0.
      */
-    public void setNear(float near) {
+    public Camera setNear(float near) {
         this.near = near;
+        return this;
     }
 
     /**
@@ -89,19 +93,22 @@ public class Camera {
      * Define o plano mais afastado de visualização da camera. Tudo o que estiver adiante desse plano não será visto.
      * @param far A distância até o plano. Deve obrigatoriamente ser maior do que o plano near.
      */
-    public void setFar(float far) {
+    public Camera setFar(float far) {
         this.far = far;
+        return this;
     }
 
     /**
      * @return A proporção da tela. A proporção é dada pela largura / altura.
      */
-    private float getAspect() {
-        IntBuffer w = BufferUtils.createIntBuffer(1);
-        IntBuffer h = BufferUtils.createIntBuffer(1);
-        long window = glfwGetCurrentContext();
-        glfwGetWindowSize(window, w, h);        
-        return w.get() / (float)h.get();
+    public float getAspect() {
+        try (var stack = MemoryStack.stackPush()) {
+            var w = stack.mallocInt(1);
+            var h = stack.mallocInt(1);
+            long window = glfwGetCurrentContext();
+            glfwGetWindowSize(window, w, h);
+            return w.get() / (float) h.get();
+        }
     }
 
     /**
@@ -122,8 +129,9 @@ public class Camera {
      * Define as matrizes de projeção nas propriedades uProjection e uView do shader.
      * @param shader Shader onde será definido. Já deve ter sofrido bind.
      */
-    public void apply(Shader shader) {
+    public Camera apply(Shader shader) {
         shader.setUniform("uProjection", getProjectionMatrix())
               .setUniform("uView", getViewMatrix());
+        return this;
     }
 }

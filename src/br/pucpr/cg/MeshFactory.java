@@ -1,13 +1,18 @@
 package br.pucpr.cg;
 
-import org.joml.Vector3f;
-
 import br.pucpr.mage.Mesh;
 import br.pucpr.mage.MeshBuilder;
+import br.pucpr.mage.Shader;
+import org.joml.Vector3f;
 
 public class MeshFactory {
-    
-    public static Mesh createCube() {
+    private Shader shader;
+
+    public MeshFactory(Shader shader) {
+        this.shader = shader;
+    }
+
+    public Mesh createCube() {
         return createCube(
             new Vector3f(0.988f, 0.663f, 0.522f),
             new Vector3f(0.522f, 0.792f, 0.365f),
@@ -18,12 +23,12 @@ public class MeshFactory {
         );
     }   
     
-    public static Mesh createCube(Vector3f color) {
+    public Mesh createCube(Vector3f color) {
         return createCube(color, color, color, color, color, color);
     }
     
-    public static Mesh createCube(Vector3f frontColor, Vector3f backColor, Vector3f topColor, Vector3f bottomColor, Vector3f rightColor, Vector3f leftColor) {
-        return new MeshBuilder()
+    public Mesh createCube(Vector3f frontColor, Vector3f backColor, Vector3f topColor, Vector3f bottomColor, Vector3f rightColor, Vector3f leftColor) {
+        return new MeshBuilder(shader)
         .addVector3fAttribute("aPosition", 
             //Face próxima
              -0.5f,  0.5f,  0.5f,  //0
@@ -105,7 +110,6 @@ public class MeshFactory {
             //Face esquerda
              20, 23, 22,
              20, 21, 23)
-        .loadShader("/br/pucpr/resource/basic")
         .create();        
     }
     
