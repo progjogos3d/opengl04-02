@@ -115,7 +115,7 @@ public class Camera {
      * @return A matriz view, calculada com base nos campos da camera.
      */
     public Matrix4f getViewMatrix() {
-        return new Matrix4f().lookAt(position, target, up);
+        return new Matrix4f().lookAt(getPosition(), getTarget(), getUp());
     }
 
     /**
